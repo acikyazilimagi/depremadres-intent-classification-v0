@@ -14,5 +14,6 @@ Postgres tablosuna erisim icin credentiallar gerekli.
 Projenin yonetimiyle alakasi olan birileriyle iletisime gecip Postgres erisim credentiallariyla baglanti saglanmasi gerekiyor.
 
 ```
+pip install -r requirements.txt
 python main.py
 ```
