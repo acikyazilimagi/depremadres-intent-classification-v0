@@ -1,6 +1,9 @@
 import json
 import requests
 import os 
+from dotenv import load_dotenv
+
+load_dotenv(".env")
 
 API_TOKEN = os.getenv("HF_HUB_TOKEN")
 headers = {"Authorization": f"Bearer {API_TOKEN}"}

@@ -11,13 +11,14 @@ kurtarma_keywords = ["enkaz", "enkaz altinda ses", "yardim", "altinda", "enkaz",
                     "kat", "ACIL", "altindalar", "enkazaltindayim", "yardim", "alinamiyor", "Enkaz", "yardimci", "ENKAZ", 
                     "saatlerdir", "destek", "altinda", "enkazda", "kurtarma", "kurtarma calismasi", "kurtarma talebi", "ulasilamayan kisiler", 
                      "ses", "vinc", "eskavator", "projektor"]
-yemek_su_keywords = ["gida talebi", "gida", "yemek", "su", "corba"]
-giysi_keywords = ["giysi talebi", "giysi", "battaniye", "yagmurluk", "kazak", "corap", "soguk", "bot"]
+yemek_su_keywords = ["gida talebi", "gida", "yemek", "su", "corba", "yiyecek", "icecek"]
+giysi_keywords = ["giysi talebi", "giysi", "battaniye", "yagmurluk", "kazak", "corap", "soguk", "bot", "isitici", "cadir"]
+
 keywords = kurtarma_keywords + yemek_su_keywords + giysi_keywords
 labels = ["KURTARMA", "YEMEK-SU", "GIYSI"]
 # labels = [{"KURTARMA": kurtarma_keywords}, {"YEMEK-SU", yemek_su_keywords}, {"SES": ses_keywords}, {"GIYSI": giysi_keywords}]
 # pattern = f"(^|\W){keywords}($|\W)"
-plot_data = {"key": labels, "count": [0 for i in range(len(labels))]}
+# plot_data = {"key": labels, "count": [0 for i in range(len(labels))]}
 
 def get_data(file_name):
     df = pd.read_csv(file_name)
@@ -58,16 +59,18 @@ def remove_diacritics(text):
  
     return text
 
-def process_tweet(tweet):
+def process_tweet(tweet, plot_data):
     # normalize text to english characters
     tweet_normalized = remove_diacritics(tweet[1]) # tweet[1] -> full_text
     # check if tweet contains any of the keywords
     labels, is_match = check_regex_return_keyword(tweet_normalized)
     if is_match:
-        update_plot_data(labels)
+        plot_data = update_plot_data(plot_data, labels)
         # TODO check: db format'a uygun mu? Halihazirda gelen bir dataya sadece label eklenecek ise guncellenmesi lazim.
         # db_format = {"label": labels, "geo_loc": tweet["geo_loc"], "tweet_id": tweet['tweet_id'], "created_at": tweet['created_at'], "full_text": tweet['full_text']}
-        return labels
+        return labels, plot_data
+    else:
+        return None, plot_data
 
 def process_tweet_stream(df):
     db_ready_data_list = []
@@ -75,10 +78,11 @@ def process_tweet_stream(df):
         db_ready_data_list.append(process_tweet(row))
     return db_ready_data_list
 
-def update_plot_data(labels):
+def update_plot_data(plot_data, labels):
     for label in labels:
         label_idx = [i for i, x in enumerate(plot_data["key"]) if x == label][0]
         plot_data["count"][label_idx] += 1
+    return plot_data
 
 def draw_plot(plot_data):
         plt.bar(plot_data["key"], plot_data["count"])
