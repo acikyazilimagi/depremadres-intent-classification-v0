@@ -4,3 +4,6 @@ data.csv
 
 # MacOS directory specific files
 .DS_Store
+
+deprem_convert_csv/
+deprem_converted_csv/
