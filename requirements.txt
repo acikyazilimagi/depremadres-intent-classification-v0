@@ -3,3 +3,4 @@ pandas==1.5.3
 psycopg2==2.9.5
 python-dotenv==0.21.1
 tqdm==4.64.1
+requests
