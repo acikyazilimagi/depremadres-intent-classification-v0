@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 def get_data(conn, table_name, column_names, condition):
     cur = conn.cursor()
     query = "SELECT {} FROM {} WHERE {}".format(', '.join(column_names), table_name, condition)
+    # query for filtering data with multiple claueses
+    # query = "SELECT {} FROM {} WHERE is_done = True AND intent_result = ''".format(', '.join(column_names), table_name)
     cur.execute(query)
     return cur.fetchall()
 
