@@ -1,17 +1,31 @@
 import json
 import requests
-import os 
+import os
+import time
 from dotenv import load_dotenv
+from typing import Dict, Optional
 
 load_dotenv(".env")
 
 API_TOKEN = os.getenv("HF_HUB_TOKEN")
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
 API_URL = "https://api-inference.huggingface.co/models/emrecan/convbert-base-turkish-mc4-cased-allnli_tr"
-def query(payload):
+
+def query(payload: Dict) -> Optional[Dict]:
     data = json.dumps(payload)
     response = requests.request("POST", API_URL, headers=headers, data=data)
-    return json.loads(response.content.decode("utf-8"))
+
+    # Check status code
+    if response.status_code != 200:
+        print(f"Query: {payload} failed to run by returning code of {response.status_code}. Response: {response.text} ")
+        print("Trying again in 10 seconds...")
+        # Wait 10 seconds and try again
+        time.sleep(10)
+        response = requests.request("POST", API_URL, headers=headers, data=data)
+        if response.status_code != 200:
+            return None
+
+    return response.json()
 
 
 def batch_query(data, candidate_labels):
