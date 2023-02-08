@@ -9,9 +9,11 @@ import matplotlib.pyplot as plt
 cluster_dict_label = {"KURTARMA": [{}], "YEMEK-SU": [{}], "GIYSI": [{}]}
 kurtarma_keywords = ["enkaz", "enkaz altinda ses", "yardim", "altinda", "enkaz", "gocuk", "bina", "YARDIM", "acil", 
                     "kat", "ACIL", "altindalar", "enkazaltindayim", "yardim", "alinamiyor", "Enkaz", "yardimci", "ENKAZ", 
-                    "saatlerdir", "destek", "altinda", "enkazda", "kurtarma", "kurtarma calismasi", "kurtarma talebi", "ulasilamayan kisiler", "ses"]
+                    "saatlerdir", "destek", "altinda", "enkazda", "kurtarma", "kurtarma calismasi", "kurtarma talebi", "ulasilamayan kisiler", 
+                     "ses", "vinc", "eskavator", "projektor"]
 yemek_su_keywords = ["gida talebi", "gida", "yemek", "su", "corba", "yiyecek", "icecek"]
-giysi_keywords = ["giysi talebi", "giysi", "battaniye", "yagmurluk", "kazak", "corap", "soguk", "isitici", "cadir"]
+giysi_keywords = ["giysi talebi", "giysi", "battaniye", "yagmurluk", "kazak", "corap", "soguk", "bot", "isitici", "cadir"]
+
 keywords = kurtarma_keywords + yemek_su_keywords + giysi_keywords
 labels = ["KURTARMA", "YEMEK-SU", "GIYSI"]
 # labels = [{"KURTARMA": kurtarma_keywords}, {"YEMEK-SU", yemek_su_keywords}, {"SES": ses_keywords}, {"GIYSI": giysi_keywords}]
