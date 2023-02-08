@@ -18,8 +18,8 @@ data = pg_ops.get_data(conn, 'tweets_depremaddress', ['id', 'full_text'], 'is_do
 # print("Data: {}".format(data))
 print("Data length: {}".format(len(data)))
 
-for row in tqdm(data):
-# for row in data:
+# for row in tqdm(data):
+for row in data:
     rule_based_labels, plot_data = rbc.process_tweet(row, plot_data)
     intent_results = ",".join(rule_based_labels) if rule_based_labels else ""
 
@@ -38,9 +38,7 @@ for row in tqdm(data):
                 labels_filtered = [zsc_result["labels"][i] for i in range(len(label_scores)) if label_scores[i] > 0.3]
                 intent_results = ",".join([label for label in labels_filtered])                
                 plot_data = rbc.update_plot_data(plot_data, labels_filtered)
-
-
-    query = "UPDATE tweets_depremaddress SET intent=%s, is_done=True WHERE id=%s", (intent_results, row[0])
+    # query = "UPDATE tweets_depremaddress SET intent=%s, is_done=True WHERE id=%s", (intent_results, row[0])
     # print(query)
     cur = conn.cursor()
     cur.execute("UPDATE tweets_depremaddress SET intent_result=%s, is_done=True WHERE id=%s", (intent_results, row[0]))
