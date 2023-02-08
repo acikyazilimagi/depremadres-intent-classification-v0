@@ -4,7 +4,7 @@ import os
 
 API_TOKEN = os.getenv("HF_HUB_TOKEN")
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
-API_URL = "https://api-inference.huggingface.co/models/joeddav/xlm-roberta-large-xnli"
+API_URL = "https://api-inference.huggingface.co/models/emrecan/convbert-base-turkish-mc4-cased-allnli_tr"
 def query(payload):
     data = json.dumps(payload)
     response = requests.request("POST", API_URL, headers=headers, data=data)
