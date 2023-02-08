@@ -10,7 +10,7 @@ cluster_dict_label = {"KURTARMA": [{}], "YEMEK-SU": [{}], "GIYSI": [{}]}
 kurtarma_keywords = ["enkaz", "enkaz altinda ses", "yardim", "altinda", "enkaz", "gocuk", "bina", "YARDIM", "acil", 
                     "kat", "ACIL", "altindalar", "enkazaltindayim", "yardim", "alinamiyor", "Enkaz", "yardimci", "ENKAZ", 
                     "saatlerdir", "destek", "altinda", "enkazda", "kurtarma", "kurtarma calismasi", "kurtarma talebi", "ulasilamayan kisiler", 
-                     "ses", "vinc", "eskavator", "projektor", "sesler", "kurtarilmayi", "lutfen", "bekliyoruz", "lazim", "ihtiyac"]
+                     "ses", "vinc", "eskavator", "projektor", "sesler", "kurtarilmayi"]
 yemek_su_keywords = ["gida talebi", "gida", "yemek", "su", "corba", "yiyecek", "icecek", "acliktan", "erzak"]
 giysi_keywords = ["giysi talebi", "giysi", "battaniye", "yagmurluk", "kazak", "corap", "soguk", "bot", "isitici", "cadir", "hava", 
                     "camasir", "pijama", "soguktan", "yatak", "sisme", "bez", "bezi", "bebek bezi", "soba", 
