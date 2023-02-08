@@ -1,2 +1,6 @@
 .env
-data_new.csv
+data.csv
+sample_data
+
+# MacOS directory specific files
+.DS_Store
