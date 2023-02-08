@@ -11,18 +11,22 @@ conn = pg_ops.connect_to_db()
 data = pg_ops.get_data(conn, 'tweets_depremaddress', ['id', 'full_text'], 'is_done = False')
 print("data: ", data)
 for row in data:
-    processed_text = rbc.process_tweet(row)
+    rule_based_labels = rbc.process_tweet(row)
     intent_results = ""
-    if processed_text is not None:
-        intent_results = ",".join(processed_text)
-    zsc_result = zsc.query(
-            {
-                "inputs": row[1],
-                "parameters": {"candidate_labels": labels},
-            })
     print("=====================================")
-    print("intent results from rule-based: ", intent_results)
-    print("intent results from zsc: ", zsc_result)
+    if rule_based_labels is not None:
+        intent_results = ",".join(rule_based_labels)
+        print("intent results from rule-based: ", intent_results)
+    elif intent_results == "":
+        zsc_result = zsc.query(
+                {
+                    "inputs": row[1],
+                    "parameters": {"candidate_labels": labels},
+                })
+        print("zsc result: ", zsc_result)
+        label_scores = zsc_result["scores"]
+        intent_results = ",".join([zsc_result["labels"][i] for i in range(len(label_scores)) if label_scores[i] > 0.3])
+    print("intent results from zsc: ", intent_results)
     print("=====================================")
     # query = "UPDATE tweets_depremaddress SET intent=%s, is_done=True WHERE id=%s", (intent_results, row[0])
     # print(query)

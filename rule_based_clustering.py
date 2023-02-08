@@ -11,7 +11,7 @@ kurtarma_keywords = ["enkaz", "enkaz altinda ses", "yardim", "altinda", "enkaz",
                     "kat", "ACIL", "altindalar", "enkazaltindayim", "yardim", "alinamiyor", "Enkaz", "yardimci", "ENKAZ", 
                     "saatlerdir", "destek", "altinda", "enkazda", "kurtarma", "kurtarma calismasi", "kurtarma talebi", "ulasilamayan kisiler", "ses"]
 yemek_su_keywords = ["gida talebi", "gida", "yemek", "su", "corba"]
-giysi_keywords = ["giysi talebi", "giysi", "battaniye", "yagmurluk", "kazak", "corap", "soguk"]
+giysi_keywords = ["giysi talebi", "giysi", "battaniye", "yagmurluk", "kazak", "corap", "soguk", "isitici"]
 keywords = kurtarma_keywords + yemek_su_keywords + giysi_keywords
 labels = ["KURTARMA", "YEMEK-SU", "GIYSI"]
 # labels = [{"KURTARMA": kurtarma_keywords}, {"YEMEK-SU", yemek_su_keywords}, {"SES": ses_keywords}, {"GIYSI": giysi_keywords}]
