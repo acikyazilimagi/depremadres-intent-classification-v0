@@ -35,7 +35,7 @@ def batch_query(data, candidate_labels):
     for tweet in data:
         outputs.append(query(
             {
-                "inputs": "Hi, I recently bought a device from your company but it is not working as advertised and I would like to get reimbursed!",
+                "inputs": tweet,
                 "parameters": {"candidate_labels": candidate_labels},
             }))
     return outputs
