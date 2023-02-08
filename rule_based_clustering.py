@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 import matplotlib.pyplot as plt
+from typing import Dict, Tuple, Set, Optional, List, Union
 
 # set:
 #  key: geo_loc
@@ -27,7 +28,15 @@ def get_data(file_name):
     df = pd.read_csv(file_name)
     return df
 
-def check_regex_return_keyword(full_text):
+def check_regex_return_keyword(full_text: str)-> Set[str]:
+    """
+    Check if the given text contains any of the keywords. To assign a label to the tweet.
+    Args:
+        full_text: The text to check.
+
+    Returns:
+        The labels of the tweet. If the tweet does not contain any of the keywords, return an empty set.
+    """
     label_list = []
     for keyword in keywords:
         pattern = f"(^|\W){keyword}($|\W)"
@@ -39,12 +48,18 @@ def check_regex_return_keyword(full_text):
                 label_list.append("YEMEK-SU")
             elif keyword in giysi_keywords:
                 label_list.append("GIYSI")
-    if len(label_list) > 0:
-        return set(label_list), True
-    else:
-        return None, False
 
-def remove_diacritics(text):
+    return set(label_list)
+
+def remove_diacritics(text: str) -> str:
+    """
+    Remove diacritics from the given text.
+    Args:
+        text: The text to remove diacritics from.
+
+    Returns:
+        The text without diacritics.
+    """
     # define the mapping from diacritic characters to non-diacritic characters
     mapping = {
         '\u00c7': 'C', '\u00e7': 'c',
@@ -62,18 +77,33 @@ def remove_diacritics(text):
  
     return text
 
-def process_tweet(tweet, plot_data):
+def process_tweet(tweet: Tuple, plot_data: Dict) -> Tuple[Optional[Set[str]], Dict]:
+    """
+    Process the given tweet.
+    Check if the tweet contains any of the keywords using rules.
+    If it does, update the plot data and assign labels to the tweet
+
+    Args:
+        tweet: The tweet to process. tweet[1] -> full_text
+        plot_data: The plot data to update.
+
+    Returns:
+        The labels of the tweet. If the tweet does not contain any of the keywords, return None.
+    """
+
     # normalize text to english characters
     tweet_normalized = remove_diacritics(tweet[1]) # tweet[1] -> full_text
+
     # check if tweet contains any of the keywords
-    labels, is_match = check_regex_return_keyword(tweet_normalized)
-    if is_match:
-        plot_data = update_plot_data(plot_data, labels)
-        # TODO check: db format'a uygun mu? Halihazirda gelen bir dataya sadece label eklenecek ise guncellenmesi lazim.
-        # db_format = {"label": labels, "geo_loc": tweet["geo_loc"], "tweet_id": tweet['tweet_id'], "created_at": tweet['created_at'], "full_text": tweet['full_text']}
-        return labels, plot_data
-    else:
+    labels = check_regex_return_keyword(tweet_normalized)
+    if not labels:
         return None, plot_data
+
+    plot_data = update_plot_data(plot_data, labels)
+    # TODO check: db format'a uygun mu? Halihazirda gelen bir dataya sadece label eklenecek ise guncellenmesi lazim.
+    # db_format = {"label": labels, "geo_loc": tweet["geo_loc"], "tweet_id": tweet['tweet_id'], "created_at": tweet['created_at'], "full_text": tweet['full_text']}
+    return labels, plot_data
+
 
 def process_tweet_stream(df):
     db_ready_data_list = []
@@ -81,18 +111,36 @@ def process_tweet_stream(df):
         db_ready_data_list.append(process_tweet(row))
     return db_ready_data_list
 
-def update_plot_data(plot_data, labels):
+def update_plot_data(plot_data: Dict, labels: Union[Set[str],List[str]]) -> Dict:
+    """
+    Update the plot data with the given labels.
+    Args:
+        plot_data: The plot data to update.
+        labels: The labels to update the plot data with.
+
+    Returns:
+        The updated plot data.
+    """
     for label in labels:
-        label_idx = [i for i, x in enumerate(plot_data["key"]) if x == label][0]
-        plot_data["count"][label_idx] += 1
+        label_index = plot_data["key"].index(label)
+        plot_data["count"][label_index] += 1
     return plot_data
 
-def draw_plot(plot_data):
-        plt.bar(plot_data["key"], plot_data["count"])
-        plt.xlabel("Cluster Label")
-        plt.ylabel("Tweet Count")
-        plt.title("Tweet Count per Cluster Label")
-        plt.show()
+def draw_plot(plot_data: Dict):
+    """ Draw the plot with the given plot data.
+       It draws label count of the tweets.
+
+    Args:
+        plot_data: The plot data to draw the plot with.
+
+    Returns:
+        None
+    """
+    plt.bar(plot_data["key"], plot_data["count"])
+    plt.xlabel("Cluster Label")
+    plt.ylabel("Tweet Count")
+    plt.title("Tweet Count per Cluster Label")
+    plt.show()
 
 # data = get_data('data_new.csv')
 # processed_data = process_tweet_stream(data)
