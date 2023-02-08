@@ -17,7 +17,8 @@ data = pg_ops.get_data(conn, 'tweets_depremaddress', ['id', 'full_text'], 'is_do
 # print("Data: {}".format(data))
 print("Data length: {}".format(len(data)))
 
-for row in tqdm(data):
+# for row in tqdm(data):
+for row in data:
     rule_based_labels, plot_data = rbc.process_tweet(row, plot_data)
     intent_results = ""
     if rule_based_labels is not None:
