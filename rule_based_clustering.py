@@ -7,12 +7,14 @@ import matplotlib.pyplot as plt
 #  key: geo_loc
 #  value: cluster_label: {enkaz: tweet_sayisi, tweet_id, created_at}, (yemek, tweet_sayisi, tweet_id, created_at), (barinma, tweet_sayisi, tweet_id, created_at), (ses, tweet_sayisi, tweet_id, created_at)
 cluster_dict_label = {"KURTARMA": [{}], "YEMEK-SU": [{}], "GIYSI": [{}]}
-kurtarma_keywords = ["enkaz", "enkaz altinda ses", "yardim", "altinda", "enkaz", "gocuk", "bina", "YARDIM", "acil", 
+kurtarma_keywords = ["enkaz", "enkaz altinda ses", "yardim", "altinda", "enkaz", "gocuk", "bina", "YARDIM", "acil",
                     "kat", "ACIL", "altindalar", "enkazaltindayim", "yardim", "alinamiyor", "Enkaz", "yardimci", "ENKAZ", 
                     "saatlerdir", "destek", "altinda", "enkazda", "kurtarma", "kurtarma calismasi", "kurtarma talebi", "ulasilamayan kisiler", 
-                     "ses", "vinc", "eskavator", "projektor"]
+                     "ses", "vinc", "eskavator", "projektor", "yaşında", "konum", "sokak", "Cd.", "blok", "altında", "caddesi",
+                     "apartmanı", "mah.", "Sitesi", "No", "ailesi", "göçük", "acilvinc", "sesi", "altındalar", "Doktor"]
 yemek_su_keywords = ["gida talebi", "gida", "yemek", "su", "corba", "yiyecek", "icecek"]
-giysi_keywords = ["giysi talebi", "giysi", "battaniye", "yagmurluk", "kazak", "corap", "soguk", "bot", "isitici", "cadir"]
+giysi_keywords = ["giysi talebi", "giysi", "battaniye", "yagmurluk", "kazak", "corap", "soguk", "bot", "isitici", "cadir", "Ayakkabı", "yorgan", 
+                    "BEZİ", "bezi", "bebek bezi"]
 
 keywords = kurtarma_keywords + yemek_su_keywords + giysi_keywords
 labels = ["KURTARMA", "YEMEK-SU", "GIYSI"]
