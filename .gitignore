@@ -1,2 +1,5 @@
 .env
 data_new.csv
+
+# MacOS defult file system
+.DS_Store
