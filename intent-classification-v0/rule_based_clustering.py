@@ -3,79 +3,95 @@ import numpy as np
 import re
 import matplotlib.pyplot as plt
 from typing import Dict, Tuple, Set, Optional, List, Union
+from unidecode import unidecode
+import os
 
-# set:
-#  key: geo_loc
-#  value: cluster_label: {enkaz: tweet_sayisi, tweet_id, created_at}, (yemek, tweet_sayisi, tweet_id, created_at), (barinma, tweet_sayisi, tweet_id, created_at), (ses, tweet_sayisi, tweet_id, created_at)
-cluster_dict_label = {"KURTARMA": [{}], "YEMEK-SU": [{}], "GIYSI": [{}]}
-kurtarma_keywords = ["enkaz", "enkaz altinda ses", "yardim", "altinda", "enkaz", "gocuk", "bina", "YARDIM", "acil", 
-                    "kat", "ACIL", "altindalar", "enkazaltindayim", "yardim", "alinamiyor", "Enkaz", "yardimci", "ENKAZ", 
-                    "saatlerdir", "destek", "altinda", "enkazda", "kurtarma", "kurtarma calismasi", "kurtarma talebi", "ulasilamayan kisiler", 
-                     "ses", "vinc", "eskavator", "projektor", "sesler", "kurtarilmayi", "yaşında", "blok", "altında",
-                     "apartmanı", "Sitesi", "ailesi", "göçük", "acilvinc", "sesi", "altındalar", "Doktor"]
-yemek_su_keywords = ["gida talebi", "gida", "yemek", "su", "corba", "yiyecek", "icecek", "acliktan", "erzak"]
-giysi_keywords = ["giysi talebi", "giysi", "battaniye", "yagmurluk", "kazak", "corap", "soguk", "bot", "isitici", "cadir", "hava", 
-                    "camasir", "pijama", "soguktan", "yatak", "sisme", "bez", "bezi", "bebek bezi", "soba", 
-                    "hijyen", "temizlik", "temizlik malzemesi", "basortu", "hijyen paketi", "kar", "hipotermi", "donmak", "yorgan"]
+# Directory of this file.
+CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 
-keywords = kurtarma_keywords + yemek_su_keywords + giysi_keywords
-labels = ["KURTARMA", "YEMEK-SU", "GIYSI"]
-# labels = [{"KURTARMA": kurtarma_keywords}, {"YEMEK-SU", yemek_su_keywords}, {"SES": ses_keywords}, {"GIYSI": giysi_keywords}]
-# pattern = f"(^|\W){keywords}($|\W)"
-# plot_data = {"key": labels, "count": [0 for i in range(len(labels))]}
+# Directory that has <intent>.txt config files.
+INTENT_CONFIG_DIR = os.path.join(CUR_DIR, "intent_config")
+
+
+class RuleBasedClassifier(object):
+    """
+    Rule based classifier that uses regex patterns to classify tweets.
+
+    It will read all the .txt files in the intent_config directory and use the
+    file name as the intent name and the file contents as the keywords.
+
+    The keywords are used to compile regex patterns that are used to classify
+    the tweets.
+
+    Example usage:
+    >>> classifier = RuleBasedClassifier()
+    >>> classifier.classify("Yardim edin")
+    {"KURTARMA"}
+    """
+
+    def __init__(self, intent_config_dir=INTENT_CONFIG_DIR):
+        self.intent_to_keywords = {}  # Will be loaded below.
+        self.intent_to_patterns = {}  # Will be loaded below.
+        self.__load_intent_configs(intent_config_dir)
+        self.__compile_keywords_to_patterns()
+
+    def __load_intent_configs(self, intent_config_dir):
+        configs = [f for f in os.listdir(
+            intent_config_dir) if f.endswith(".txt")]
+        self.intent_to_config = {os.path.splitext(c)[0]: c for c in configs}
+        for intent, config in self.intent_to_config.items():
+            with open(os.path.join(intent_config_dir, config), "r") as f:
+                self.intent_to_keywords[intent] = f.read().splitlines()
+
+    def __compile_keywords_to_patterns(self):
+        for intent, keywords in self.intent_to_keywords.items():
+            self.intent_to_patterns[intent] = [re.compile(
+                f"(^|\W){k}($|\W)", re.IGNORECASE) for k in keywords]
+
+    def all_intents(self):
+        """Returns list of all possible intents this classifier can classify."""
+        return self.intent_to_patterns.keys()
+
+    def classify(self, text: str) -> Set[str]:
+        """
+        Check if the given text contains any of the keywords of any intent.
+        Args:
+            text: The text to check.
+
+        Returns:
+            Set of labels of the tweet, if any.
+        """
+        intents = []
+        for intent, patterns in self.intent_to_patterns.items():
+            for pattern in patterns:
+                if re.search(pattern, text):
+                    intents.append(intent)
+                    break  # No need to check other patterns for this intent.
+        return set(intents)
+
+
+# Signleton instance of the classifier that holds precompiled regex patterns for all intents.
+classifier = RuleBasedClassifier()
+
 
 def get_data(file_name):
     df = pd.read_csv(file_name)
     return df
 
-def check_regex_return_keyword(full_text: str)-> Set[str]:
+
+def preprocess_tweet(text: str) -> str:
     """
-    Check if the given text contains any of the keywords. To assign a label to the tweet.
+    Preprocess the given text before inference.
+
+    Right now only converts diacritics to ascii versions (turkish letters).
     Args:
-        full_text: The text to check.
+        text: The text to normalize.
 
     Returns:
-        The labels of the tweet. If the tweet does not contain any of the keywords, return an empty set.
+        Normalized text.
     """
-    label_list = []
-    for keyword in keywords:
-        pattern = f"(^|\W){keyword}($|\W)"
-        full_text = re.sub(r'[^a-z\s]+', '', full_text, flags=re.IGNORECASE)
-        if re.search(pattern, full_text, re.IGNORECASE):
-            if keyword in kurtarma_keywords:
-                label_list.append("KURTARMA")
-            elif keyword in yemek_su_keywords:
-                label_list.append("YEMEK-SU")
-            elif keyword in giysi_keywords:
-                label_list.append("GIYSI")
+    return unidecode(text)
 
-    return set(label_list)
-
-def remove_diacritics(text: str) -> str:
-    """
-    Remove diacritics from the given text.
-    Args:
-        text: The text to remove diacritics from.
-
-    Returns:
-        The text without diacritics.
-    """
-    # define the mapping from diacritic characters to non-diacritic characters
-    mapping = {
-        '\u00c7': 'C', '\u00e7': 'c',
-        '\u011e': 'G', '\u011f': 'g',
-        '\u0130': 'I', '\u0131': 'i',
-        '\u015e': 'S', '\u015f': 's',
-        '\u00d6': 'O', '\u00f6': 'o',
-        '\u00dc': 'U', '\u00fc': 'u',
-        '\u0152': 'OE', '\u0153': 'oe',
-        '\u0049': 'I', '\u0131': 'i',
-    }
- 
-    # replace each diacritic character with its non-diacritic counterpart
-    text = ''.join(mapping.get(c, c) for c in text)
- 
-    return text
 
 def process_tweet(tweet: Tuple, plot_data: Dict) -> Tuple[Optional[Set[str]], Dict]:
     """
@@ -93,38 +109,40 @@ def process_tweet(tweet: Tuple, plot_data: Dict) -> Tuple[Optional[Set[str]], Di
 
     # normalize text to english characters
     tweet_normalized = remove_diacritics(tweet["Full_text"]) # tweet[1] -> full_text
-
     # check if tweet contains any of the keywords
-    labels = check_regex_return_keyword(tweet_normalized)
+    labels = classifier.classify(tweet_normalized)
     if not labels:
         return None, plot_data
 
     plot_data = update_plot_data(plot_data, labels)
-    # TODO check: db format'a uygun mu? Halihazirda gelen bir dataya sadece label eklenecek ise guncellenmesi lazim.
-    # db_format = {"label": labels, "geo_loc": tweet["geo_loc"], "tweet_id": tweet['tweet_id'], "created_at": tweet['created_at'], "full_text": tweet['full_text']}
     return labels, plot_data
 
 
 def process_tweet_stream(df):
+    plot_data = {}
     db_ready_data_list = []
     for _, row in df.iterrows():
-        db_ready_data_list.append(process_tweet(row))
-    return db_ready_data_list
+        db_ready_data_list.append(process_tweet(row, plot_data))
+    return db_ready_data_list, plot_data
 
-def update_plot_data(plot_data: Dict, labels: Union[Set[str],List[str]]) -> Dict:
+
+def update_plot_data(plot_data: Dict, labels: Union[Set[str], List[str]]) -> Dict:
     """
-    Update the plot data with the given labels.
+    Increment the count of the given labels in the plot data.
     Args:
-        plot_data: The plot data to update.
-        labels: The labels to update the plot data with.
+        plot_data: The dictionary that holds INTENT - COUNT pairs. 
+        labels: The labels to increment the count of.
 
     Returns:
         The updated plot data.
     """
     for label in labels:
-        label_index = plot_data["key"].index(label)
-        plot_data["count"][label_index] += 1
+        if label in plot_data:
+            plot_data[label] += 1
+        else:
+            plot_data[label] = 1
     return plot_data
+
 
 def draw_plot(plot_data: Dict):
     """ Draw the plot with the given plot data.
@@ -136,12 +154,14 @@ def draw_plot(plot_data: Dict):
     Returns:
         None
     """
-    plt.bar(plot_data["key"], plot_data["count"])
+    plt.bar(plot_data.keys(), plot_data.values())
     plt.xlabel("Cluster Label")
     plt.ylabel("Tweet Count")
     plt.title("Tweet Count per Cluster Label")
     plt.show()
 
-# data = get_data('data_new.csv')
-# processed_data = process_tweet_stream(data)
-# draw_plot(plot_data)
+
+if __name__ == '__main__':
+    data = get_data('sample_data.csv')
+    processed_data, plot_data = process_tweet_stream(data)
+    draw_plot(plot_data)
