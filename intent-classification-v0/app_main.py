@@ -50,7 +50,7 @@ async def Get_Indent(item: Item):
                 intent_results = ",".join([label for label in labels_filtered])                
                 plot_data = rbc.update_plot_data(plot_data, labels_filtered)
 
-    return item
+    return intent_results
 
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8000)

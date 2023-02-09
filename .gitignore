@@ -1,6 +1,8 @@
 .env
 data.csv
 sample_data
+indenv
+intent-classification-v0\sample_data.csv
 
 # MacOS directory specific files
 .DS_Store
