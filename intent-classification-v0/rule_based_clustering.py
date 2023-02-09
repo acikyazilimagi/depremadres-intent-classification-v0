@@ -48,6 +48,10 @@ class RuleBasedClassifier(object):
             self.intent_to_patterns[intent] = [re.compile(
                 f"(^|\W){k}($|\W)", re.IGNORECASE) for k in keywords]
 
+    def all_intents(self):
+        """Returns list of all possible intents this classifier can classify."""
+        return self.intent_to_patterns.keys()
+
     def classify(self, text: str) -> Set[str]:
         """
         Check if the given text contains any of the keywords of any intent.
