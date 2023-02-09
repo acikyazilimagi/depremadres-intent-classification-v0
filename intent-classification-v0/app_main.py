@@ -1,7 +1,6 @@
 ﻿from typing import List
 from fastapi import FastAPI,HTTPException
 import uvicorn
-import pandas as pd
 from os import path
 from datetime import datetime
 from pydantic import BaseModel
@@ -28,20 +27,16 @@ class responseItem (BaseModel):
 
 @app.post("/items/")
 async def Get_Indent(item: Item,Rules : list):
+    if not item.Full_text:
+        raise HTTPException(status_code=500, detail="Invalid Full_text type") 
+    if len(Rules) <= 1:
+        raise HTTPException(status_code=500, detail="Invalid Rules format(Rules lenght = {})".format(len(item.Rules))) 
+    if not item.Tweet_id:
+        raise HTTPException(status_code=500, detail="Invalid Tweet_id (empty dict)") 
+
+    
     try: 
-        if not item.Full_text:
-            raise HTTPException(status_code=404, detail="Invalid Full_text type") 
-        if len(Rules) <= 1:
-            raise HTTPException(status_code=404, detail="Invalid Rules format(Rules lenght = {})".format(len(item.Rules))) 
-        if not item.Tweet_id:
-            raise HTTPException(status_code=404, detail="Invalid Tweet_id (empty dict)") 
-
-        
-        #Plotted indent rule data
-        row = pd.DataFrame(dict(item), index=[0])
-        #row = row.groupby("Full_text","Geo_loc")["Rules","Tweet_id"].apply(list)
-
-        rule_based_labels = rbc.classify(row["Full_text"].values[0])
+        rule_based_labels = rbc.classify(item.Full_text)
 
         intent_results = ",".join(rule_based_labels) if rule_based_labels else ""
         
@@ -50,7 +45,7 @@ async def Get_Indent(item: Item,Rules : list):
 
             zsc_result = zsc.query(
                 {
-                    "inputs": row[1],
+                    "inputs": item.Full_text,
                     "parameters": {"candidate_labels": rbc.labels},
                 })
 
@@ -72,7 +67,8 @@ async def Get_Indent(item: Item,Rules : list):
         return templated_output
 
     except Exception as e:
-        print(e)
+        raise HTTPException(status_code=500, detail= str(e)) 
+
 
 async def start_kafka_consumer(app):
     consumer = AIOKafkaConsumer(
