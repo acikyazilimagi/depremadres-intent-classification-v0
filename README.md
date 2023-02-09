@@ -30,3 +30,9 @@ Verisetleri icin
 7. sonuclarin analizinin yapilmasi.
 8. pm ekibiyle iletisime gecilip modellerin ne yonde ise yarayabileceginin ve entegrasyonunun planlanmasi.
 
+
+Projeyi ayağa kaldırmak için:
+```
+pip install -r requirements.txt
+python3 main.py
+```
