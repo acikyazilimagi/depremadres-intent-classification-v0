@@ -4,3 +4,6 @@ sample_data
 
 # MacOS directory specific files
 .DS_Store
+
+# IDE
+.idea/

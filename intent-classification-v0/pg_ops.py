@@ -1,9 +1,12 @@
-import psycopg2
 import os
-from dotenv import load_dotenv
 from typing import List, Tuple, Any
 
-def get_data(conn: psycopg2.connection, table_name: str, column_names: List[str], condition: str) -> List[Tuple]:
+from dotenv import load_dotenv
+import psycopg2
+from psycopg2._psycopg import connection as PsycopgConnection
+
+
+def get_data(conn: PsycopgConnection, table_name: str, column_names: List[str], condition: str) -> List[Tuple]:
     """ Get data from the table
 
     Args:
@@ -22,7 +25,8 @@ def get_data(conn: psycopg2.connection, table_name: str, column_names: List[str]
     cur.execute(query)
     return cur.fetchall()
 
-def update_data(conn: psycopg2.connection, table_name: str, column_name: str, new_value: Any, condition: str) -> None:
+
+def update_data(conn: PsycopgConnection, table_name: str, column_name: str, new_value: Any, condition: str) -> None:
     """ Update data in the table
 
     Args:
@@ -37,6 +41,7 @@ def update_data(conn: psycopg2.connection, table_name: str, column_name: str, ne
     query = "UPDATE {} SET {} = '{}' WHERE {}".format(table_name, column_name, new_value, condition)
     cur.execute(query)
     conn.commit()
+
 
 def connect_to_db():
     """ Connect to the database
