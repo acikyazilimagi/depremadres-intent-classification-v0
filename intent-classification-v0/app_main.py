@@ -1,19 +1,19 @@
 ﻿from typing import List
-from fastapi import FastAPI
-from fastapi import HTTPException
+from fastapi import FastAPI,HTTPException
 import uvicorn
 import pandas as pd
 from os import path
 from datetime import datetime
 from pydantic import BaseModel
-import rule_based_clustering as rbc
-import run_zsc as zsc
+#import ml_modules.rule_based_clustering as rbc
+from ml_modules.rule_based_clustering import RuleBasedClassifier
+import ml_modules.run_zsc as zsc
 from tqdm import tqdm
 import traceback
 from aiokafka import AIOKafkaConsumer
 import asyncio
 
-
+rbc = RuleBasedClassifier()
 app = FastAPI()
 
 class Item(BaseModel):
@@ -41,9 +41,7 @@ async def Get_Indent(item: Item,Rules : list):
         row = pd.DataFrame(dict(item), index=[0])
         #row = row.groupby("Full_text","Geo_loc")["Rules","Tweet_id"].apply(list)
 
-        plot_data = {"key": rbc.labels, "count": [0] * len(rbc.labels)}
-
-        rule_based_labels, plot_data = rbc.process_tweet(row, plot_data)
+        rule_based_labels = rbc.classify(row["Full_text"].values[0])
 
         intent_results = ",".join(rule_based_labels) if rule_based_labels else ""
         
@@ -74,7 +72,7 @@ async def Get_Indent(item: Item,Rules : list):
         return templated_output
 
     except Exception as e:
-        traceback.print_exc(e)
+        print(e)
 
 async def start_kafka_consumer(app):
     consumer = AIOKafkaConsumer(
@@ -98,6 +96,7 @@ async def start_kafka_consumer(app):
 
 
 if __name__ == '__main__':
-    app.add_event_handler("startup", start_kafka_consumer)
+    #app.add_event_handler("startup", start_kafka_consumer)
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
 

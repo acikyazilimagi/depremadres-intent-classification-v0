@@ -108,7 +108,8 @@ def process_tweet(tweet: Tuple, plot_data: Dict) -> Tuple[Optional[Set[str]], Di
     """
 
     # normalize text to english characters
-    tweet_normalized = remove_diacritics(tweet["Full_text"]) # tweet[1] -> full_text
+    tweet_normalized = preprocess_tweet(tweet[1])  # tweet[1] -> full_text
+
     # check if tweet contains any of the keywords
     labels = classifier.classify(tweet_normalized)
     if not labels:
