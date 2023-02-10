@@ -1,73 +1,66 @@
 ﻿from typing import List
-from fastapi import FastAPI,HTTPException
-import uvicorn
-from os import path
-from datetime import datetime
-from pydantic import BaseModel
-#import ml_modules.rule_based_clustering as rbc
-from ml_modules.rule_based_clustering import RuleBasedClassifier
-import ml_modules.run_zsc as zsc
-from tqdm import tqdm
-import traceback
 from aiokafka import AIOKafkaConsumer
-import asyncio
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import argparse
+import uvicorn
 
-rbc = RuleBasedClassifier()
+# ML modules
+from ml_modules.rule_based_clustering import RuleBasedClassifier
+from ml_modules.bert_classifier import BertClassifier
+# import ml_modules.run_zsc as zsc
+
+# Define command line arguments to control which classifiers to run.
+parser = argparse.ArgumentParser()
+parser.add_argument('--run_rule_based_classifier',
+                    action=argparse.BooleanOptionalAction, default=True)
+parser.add_argument('--run_bert_classifier',
+                    action=argparse.BooleanOptionalAction, default=True)
+args = parser.parse_args()
+
+# Initialize classifiers
+rule_based_classifier = None
+if args.run_rule_based_classifier:
+    rule_based_classifier = RuleBasedClassifier()
+
+bert_classifier = None
+if args.run_bert_classifier:
+    bert_classifier = BertClassifier()
+
+# Initialize fastapi.
 app = FastAPI()
 
-class Item(BaseModel):
-    Full_text: str
-    Tweet_id: str 
-    Geo_loc: str
-#modify when output princibles ok
-class responseItem (BaseModel):
-    out_data: str
-    out_data1: str 
-    out_data2: str
 
-@app.post("/items/")
-async def Get_Indent(item: Item,Rules : list):
-    if not item.Full_text:
-        raise HTTPException(status_code=500, detail="Invalid Full_text type") 
-    if len(Rules) <= 1:
-        raise HTTPException(status_code=500, detail="Invalid Rules format(Rules lenght = {})".format(len(item.Rules))) 
-    if not item.Tweet_id:
-        raise HTTPException(status_code=500, detail="Invalid Tweet_id (empty dict)") 
+# Data models.
+class Request(BaseModel):
+    text: str
 
-    
-    try: 
-        rule_based_labels = rbc.classify(item.Full_text)
+class Response(BaseModel):
+    intents: List[str]
 
-        intent_results = ",".join(rule_based_labels) if rule_based_labels else ""
-        
-        #Check indent result
-        if not intent_results:
 
-            zsc_result = zsc.query(
-                {
-                    "inputs": item.Full_text,
-                    "parameters": {"candidate_labels": rbc.labels},
-                })
+@app.post("/get_intents/")
+async def Get_Intent(item: Request) -> Response:
+    if not item.text:
+        raise HTTPException(status_code=500, detail="Malformed request, no text")
 
-            if zsc_result is not None:
-                # sequence, labels, scores
-                if "scores" in zsc_result:
-                    
-                    label_scores = zsc_result["scores"]
-                    labels_filtered = [zsc_result["labels"][i] for i in range(len(label_scores)) if label_scores[i] > 0.3]
-                    intent_results = ",".join([label for label in labels_filtered])                
-                    plot_data = rbc.update_plot_data(plot_data, labels_filtered)
-        
-        templated_output = { "Tweet_id" : item.Tweet_id,
-                                "Rules" : Rules,
-                                "Full_text" : item.Full_text,
-                                "data" : intent_results             
-                            }
-        
-        return templated_output
+    try:
+        intents = []
+
+        if args.run_rule_based_classifier:
+            assert rule_based_classifier
+            intents.extend(rule_based_classifier.classify(item.text))
+
+        if args.run_bert_classifier:
+            assert bert_classifier
+            intents.extend(bert_classifier.classify(item.text))
+
+        # Remove duplicates.
+        intents = list(set(intents))
+        return intents
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail= str(e)) 
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 async def start_kafka_consumer(app):
@@ -90,9 +83,6 @@ async def start_kafka_consumer(app):
         await consumer.stop()
 
 
-
 if __name__ == '__main__':
-    #app.add_event_handler("startup", start_kafka_consumer)
-
+    # app.add_event_handler("startup", start_kafka_consumer)
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
