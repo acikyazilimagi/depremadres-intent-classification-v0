@@ -1,50 +1,49 @@
-import rule_based_clustering as rbc
-#import pg_ops
-import run_zsc as zsc
-from tqdm import tqdm
-import pandas as pd
+"""
+Command line verison of the intent classification app.
+
+Usage:
+    python app_main.py --run_rule_based_classifier --run_bert_classifier -text='Yardim'
+"""
+import argparse
+
+# ML modules
+from ml_modules.rule_based_clustering import RuleBasedClassifier
+from ml_modules.bert_classifier import BertClassifier
+
+# Define command line arguments to control which classifiers to run.
+parser = argparse.ArgumentParser()
+parser.add_argument('--text', type=str)
+parser.add_argument('--run_rule_based_classifier',
+                    action=argparse.BooleanOptionalAction, default=True)
+parser.add_argument('--run_bert_classifier',
+                    action=argparse.BooleanOptionalAction, default=True)
+args = parser.parse_args()
+
+# Initialize classifiers
+rule_based_classifier = None
+if args.run_rule_based_classifier:
+    rule_based_classifier = RuleBasedClassifier()
+
+bert_classifier = None
+if args.run_bert_classifier:
+    bert_classifier = BertClassifier()
 
 
+def run_classifiers(text):
+    intents = []
 
-#conn = pg_ops.connect_to_db()
+    if args.run_rule_based_classifier:
+        assert rule_based_classifier
+        intents.extend(rule_based_classifier.classify(text))
 
-plot_data = {"key": rbc.labels, "count": [0] * len(rbc.labels)}
+    if args.run_bert_classifier:
+        assert bert_classifier
+        intents.extend(bert_classifier.classify(text))
 
-# is_done -> False/True based on processed or not
-# intent_result -> labels with separated by comma
-# Get data
-#data = pg_ops.get_data(conn, 'tweets_depremaddress', ['id', 'full_text'], 'is_done = False OR is_done = True') # intent_result
-data = pd.read_csv("intent-classification-v0\sample_data.csv")
-# mock call for getting multiple clause filtered data
-# data = pg_ops.get_data(conn, 'tweets_depremaddress', ['id', 'full_text'], 'is_done = True AND (intent_result = '') IS NOT FALSE')
-# print("Data: {}".format(data))
-print("Data length: {}".format(len(data)))
+    # Remove duplicates.
+    intents = list(set(intents))
+    return intents
 
-# for row in tqdm(data):
-for row in data:
-    rule_based_labels, plot_data = rbc.process_tweet(row, plot_data)
-    intent_results = ",".join(rule_based_labels) if rule_based_labels else ""
-
-    if intent_results == "":
-
-        zsc_result = zsc.query(
-            {
-                "inputs": row[1],
-                "parameters": {"candidate_labels": rbc.labels},
-            })
-
-        if zsc_result is not None:
-            # sequence, labels, scores
-            if "scores" in zsc_result:
-                label_scores = zsc_result["scores"]
-                labels_filtered = [zsc_result["labels"][i] for i in range(len(label_scores)) if label_scores[i] > 0.3]
-                intent_results = ",".join([label for label in labels_filtered])                
-                plot_data = rbc.update_plot_data(plot_data, labels_filtered)
-    # query = "UPDATE tweets_depremaddress SET intent=%s, is_done=True WHERE id=%s", (intent_results, row[0])
-    # print(query)
-    # cur = conn.cursor()
-    # cur.execute("UPDATE tweets_depremaddress SET intent_result=%s, is_done=True WHERE id=%s", (intent_results, row[0]))
-    # conn.commit()
-
-rbc.draw_plot(plot_data)
-# conn.close()
+if __name__ == '__main__':
+    intents = run_classifiers(args.text)
+    print(intents)

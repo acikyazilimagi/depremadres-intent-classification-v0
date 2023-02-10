@@ -2,14 +2,31 @@
 
 Using the eval.csv file, evaluate the performance of the classifier for each intent.
 
-TODO: curently only works with single intent lables on the golden set, need to add support for multi intent labels on golden.
+Usage:
+    python3 eval_modules.eval
 
 """
 
+import argparse
 import pandas as pd
 
 from ml_modules.rule_based_clustering import RuleBasedClassifier, preprocess_tweet
+from ml_modules.bert_classifier import BertClassifier
 
+# Define command line arguments to control which classifiers to run.
+parser = argparse.ArgumentParser()
+
+# CSV file containing the eval data.
+parser.add_argument('--eval_file', type=str, default="../data/eval.csv")
+
+# Number of entries to use for evaluation. 0 means use all entries.
+parser.add_argument('--max_num_entries', type=int, default=0)
+
+parser.add_argument('--run_rule_based_classifier',
+                    action=argparse.BooleanOptionalAction, default=True)
+parser.add_argument('--run_bert_classifier',
+                    action=argparse.BooleanOptionalAction, default=False)
+args = parser.parse_args()
 
 class ClassificationEval(object):
     def __init__(self, eval_frame, classifier_instance):
@@ -93,6 +110,14 @@ class ClassificationEval(object):
 
 
 if __name__ == '__main__':
-    eval_frame = pd.read_csv("eval.csv")[:100]
-    eval = ClassificationEval(eval_frame, RuleBasedClassifier())
-    eval.eval()
+    eval_frame = pd.read_csv(args.eval_file)
+    if args.max_num_entries:
+        eval_frame = eval_frame[args.max_num_entries]
+
+    if args.run_rule_based_classifier:
+        eval = ClassificationEval(eval_frame, RuleBasedClassifier())
+        eval.eval()
+
+    if args.run_bert_classifier:
+        eval = ClassificationEval(eval_frame, BertClassifier())
+        eval.eval()
