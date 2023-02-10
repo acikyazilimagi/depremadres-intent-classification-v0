@@ -3,7 +3,7 @@ indenv
 intent-classification-v0\sample_data.csv
 .vscode 
 # MacOS directory specific files
-.DS_Storecls
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
