@@ -53,9 +53,9 @@ def get_label_and_adres(tweet_text):
 # tweet = 'İletişim: Alperen Kurt - 5375590370 Adres: Gaziantep sevindi köyü Mesaj: köy evinde kalıyoruz elektrikli soba ihtiyacımız var 20-25 kişiyiz https://t.co/v6ZteOPatj @afadbaskanlik @akut_dernegi @ahbap @haluklevent #depremAdres'
 # label, adres = get_tweet(tweet)
 # return:
-#     label:  ['ELEKTRONIK', 'YEMEK', 'BARINMA'] -> <class 'list'>
-#     adres:  Gaziantep Sevindi Köyü -> <class 'str'>
+#     label:  ['YEMEK', 'SU', 'GIYSI', 'BARINMA', 'LOJISTIK', 'SAGLIK'] -> <class 'list'>
+#     adres:  'Hatay Defne Çekmece Mahallesi 41/2' -> <class 'str'>
 
 # Uncomment the following lines to test the function
-# tweet = 'İletişim: Alperen Kurt - 5375590370 Adres: Gaziantep sevindi köyü Mesaj: köy evinde kalıyoruz elektrikli soba ihtiyacımız var 20-25 kişiyiz https://t.co/v6ZteOPatj @afadbaskanlik @akut_dernegi @ahbap @haluklevent #depremAdres'
+# tweet = "İletişim: Özgür sezen - 5055986960 Adres: Hatay Defne Çekmece mahallesi 41/2  Mesaj: bebek bezi mama su hasta bezi yorgan battaniye fener ve kalın kıyafetler https://t.co/tV5WR3R5Wn @afadbaskanlik @akut_dernegi @ahbap @haluklevent #depremAdres"
 # print(get_label_and_adres(tweet))
