@@ -9,7 +9,7 @@ load_dotenv(".env")
 # Add logging.
 logging.basicConfig(level=logging.INFO)
 
-API_URL = "https://api-inference.huggingface.co/models/deprem-ml/bert-fine-tuned-intent"
+API_URL = "https://api-inference.huggingface.co/models/deprem-ml/multilabel_earthquake_tweet_intent_bert_base_turkish_cased"
 API_TOKEN = os.getenv("HF_HUB_TOKEN")
 
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
