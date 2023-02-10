@@ -15,7 +15,7 @@ API_TOKEN = os.getenv("HF_HUB_TOKEN")
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
 
 # The score threshold to deem a label as positive.
-CLASSIFICCTION_THRESHOLD = 0.5
+CLASSIFICATION_THRESHOLD = 0.5
 
 
 class BertClassifier(object):
@@ -28,7 +28,7 @@ class BertClassifier(object):
     ["KURTARMA"]
     """
 
-    def __init__(self, classification_threshold=CLASSIFICCTION_THRESHOLD):
+    def __init__(self, classification_threshold=CLASSIFICATION_THRESHOLD):
         self.classification_threshold = classification_threshold
 
     def __query(self, text):
