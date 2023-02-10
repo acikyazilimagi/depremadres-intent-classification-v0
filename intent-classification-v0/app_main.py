@@ -42,7 +42,7 @@ class Response(BaseModel):
 @app.post("/get_intents/")
 async def Get_Intent(item: Request) -> Response:
     if not item.text:
-        raise HTTPException(status_code=500, detail="Malformed request, no text")
+        raise HTTPException(status_code=400, detail="Bad request, no text")
 
     try:
         intents = []
