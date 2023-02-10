@@ -53,7 +53,7 @@ def get_label_and_adres(tweet_text):
 # tweet = 'İletişim: Alperen Kurt - 5375590370 Adres: Gaziantep sevindi köyü Mesaj: köy evinde kalıyoruz elektrikli soba ihtiyacımız var 20-25 kişiyiz https://t.co/v6ZteOPatj @afadbaskanlik @akut_dernegi @ahbap @haluklevent #depremAdres'
 # label, adres = get_tweet(tweet)
 # return:
-#     label:  ['YANGIN', 'KURTARMA'] -> <class 'list'>
+#     label:  ['ELEKTRONIK', 'YEMEK', 'BARINMA'] -> <class 'list'>
 #     adres:  Gaziantep Sevindi Köyü -> <class 'str'>
 
 # Uncomment the following lines to test the function
