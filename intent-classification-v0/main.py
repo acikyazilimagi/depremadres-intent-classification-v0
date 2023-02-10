@@ -1,18 +1,20 @@
 import rule_based_clustering as rbc
-import pg_ops
+#import pg_ops
 import run_zsc as zsc
 from tqdm import tqdm
+import pandas as pd
 
 
-conn = pg_ops.connect_to_db()
+
+#conn = pg_ops.connect_to_db()
 
 plot_data = {"key": rbc.labels, "count": [0] * len(rbc.labels)}
 
 # is_done -> False/True based on processed or not
 # intent_result -> labels with separated by comma
 # Get data
-data = pg_ops.get_data(conn, 'tweets_depremaddress', ['id', 'full_text'], 'is_done = False OR is_done = True') # intent_result
-
+#data = pg_ops.get_data(conn, 'tweets_depremaddress', ['id', 'full_text'], 'is_done = False OR is_done = True') # intent_result
+data = pd.read_csv("intent-classification-v0\sample_data.csv")
 # mock call for getting multiple clause filtered data
 # data = pg_ops.get_data(conn, 'tweets_depremaddress', ['id', 'full_text'], 'is_done = True AND (intent_result = '') IS NOT FALSE')
 # print("Data: {}".format(data))
@@ -40,9 +42,9 @@ for row in data:
                 plot_data = rbc.update_plot_data(plot_data, labels_filtered)
     # query = "UPDATE tweets_depremaddress SET intent=%s, is_done=True WHERE id=%s", (intent_results, row[0])
     # print(query)
-    cur = conn.cursor()
-    cur.execute("UPDATE tweets_depremaddress SET intent_result=%s, is_done=True WHERE id=%s", (intent_results, row[0]))
-    conn.commit()
+    # cur = conn.cursor()
+    # cur.execute("UPDATE tweets_depremaddress SET intent_result=%s, is_done=True WHERE id=%s", (intent_results, row[0]))
+    # conn.commit()
 
 rbc.draw_plot(plot_data)
-conn.close()
+# conn.close()

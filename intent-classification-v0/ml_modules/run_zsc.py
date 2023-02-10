@@ -8,7 +8,9 @@ from typing import Dict, Optional
 load_dotenv(".env")
 
 API_TOKEN = os.getenv("HF_HUB_TOKEN")
+
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
+
 API_URL = "https://api-inference.huggingface.co/models/emrecan/convbert-base-turkish-mc4-cased-allnli_tr"
 
 def query(payload: Dict) -> Optional[Dict]:

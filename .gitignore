@@ -1,6 +1,33 @@
 .env
-data.csv
-sample_data
-
+indenv
+intent-classification-v0\sample_data.csv
+.vscode 
 # MacOS directory specific files
-.DS_Store
+.DS_Storecls
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.pyc
+intent-classification-v0\__pycache__

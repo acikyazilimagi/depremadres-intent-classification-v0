@@ -8,7 +8,7 @@ TODO: curently only works with single intent lables on the golden set, need to a
 
 import pandas as pd
 
-from rule_based_clustering import RuleBasedClassifier, preprocess_tweet
+from ml_modules.rule_based_clustering import RuleBasedClassifier, preprocess_tweet
 
 
 class ClassificationEval(object):
