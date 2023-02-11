@@ -2,11 +2,7 @@
 
 **Proje amaci**: Twitter’dan toplanan deprem alakali verilerin labellanmasi ve analizi. Su ana kadar kelime tabanli ve zero-shot classification modeli kullanilarak intent classification yapildi. Onumuzdeki amacimiz veri takimlarinin yardimiyla verisetleri olusturup tweetleri ilgili yardim birimlerine ulastirmak amacli kumelemek. Ornegin: yemek ihtiyaci oldugunu belirten bir tweetin enkaz icin degil de gida transferi saglayacak ekiplerle paylasilmasi icin duzenlenmesi.
 
-Verisetleri icin
-
-[130k Data Drive Link](https://drive.google.com/file/d/13GFnCYUgeUPg5P4OB9M85eoMEDWeZCFS/view?usp=sharing)
-
-#depremadres data repoda mevcut: sample_data.csv
+#depremadres data Trello'da mevcut: 130k tweet data
 
 **Yapilmasi gerekenler**
 
