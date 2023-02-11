@@ -4,13 +4,14 @@ from typing import List
 
 import requests
 from dotenv import load_dotenv
+from ml_modules.base_classifier import BaseClassifier
 
 load_dotenv(".env")
 
 # Add logging.
 logging.basicConfig(level=logging.INFO)
 
-API_URL = "https://api-inference.huggingface.co/models/deprem-ml/multilabel_earthquake_tweet_intent_bert_base_turkish_cased"
+API_URL = "https://api-inference.huggingface.co/models/deprem-ml/multilabel_earthquake_tweet_intent_bert_base_turkish_cased"  # noqa
 API_TOKEN = os.getenv("HF_HUB_TOKEN")
 
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
@@ -19,7 +20,7 @@ headers = {"Authorization": f"Bearer {API_TOKEN}"}
 CLASSIFICATION_THRESHOLD = 0.5
 
 
-class BertClassifier(object):
+class BertClassifier(BaseClassifier):
     """
     BERT based classifier to uses huggingface inference API to classify tweets.
 
