@@ -4,11 +4,11 @@ from typing import List
 import uvicorn
 from aiokafka import AIOKafkaConsumer
 from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 # ML modules
 from src.ml_modules.bert_classifier import BertClassifier
 from src.ml_modules.rule_based_clustering import RuleBasedClassifier
-from pydantic import BaseModel
 
 # import ml_modules.run_zsc as zsc
 

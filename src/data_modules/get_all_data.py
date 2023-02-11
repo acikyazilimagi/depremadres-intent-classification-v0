@@ -1,11 +1,15 @@
-import pg_ops
 import csv
+
+import pg_ops
 
 conn = pg_ops.connect_to_db()
 
-data = pg_ops.get_data(conn, 'tweets_depremaddress', ['id', 'full_text', 'tweet_id', 'geo_link'], '1=1')
+data = pg_ops.get_data(conn, 'tweets_depremaddress', [
+                       'id', 'full_text', 'tweet_id', 'geo_link'], '1=1')
 
 # function to write data to csv file
+
+
 def write_to_csv(data, filename):
     with open(filename, 'w', newline='') as csvfile:
         # creating a csv writer object

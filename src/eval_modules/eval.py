@@ -8,10 +8,12 @@ Usage:
 """
 
 import argparse
+
 import pandas as pd
 
-from src.ml_modules.rule_based_clustering import RuleBasedClassifier, preprocess_tweet
 from src.ml_modules.bert_classifier import BertClassifier
+from src.ml_modules.rule_based_clustering import (RuleBasedClassifier,
+                                                  preprocess_tweet)
 
 # Define command line arguments to control which classifiers to run.
 parser = argparse.ArgumentParser()

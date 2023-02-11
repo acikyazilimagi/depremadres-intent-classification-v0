@@ -1,9 +1,10 @@
+from typing import List, Union
+
 import requests
-from typing import Union
 from requests import Response
 
 
-def chase_redirects(url: Union[list, str]) -> list[str]:
+def chase_redirects(url: Union[List, str]) -> List[str]:
     _urls = []
 
     def _chase(url: str):
