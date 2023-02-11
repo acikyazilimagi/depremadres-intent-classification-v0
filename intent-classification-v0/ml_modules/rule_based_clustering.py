@@ -1,10 +1,10 @@
-import pandas as pd
-import numpy as np
-import re
-import matplotlib.pyplot as plt
-from typing import Dict, Tuple, Set, Optional, List, Union
-from unidecode import unidecode
 import os
+import re
+from typing import Dict, List, Optional, Set, Tuple, Union
+
+import matplotlib.pyplot as plt
+import pandas as pd
+from unidecode import unidecode
 
 # Directory of this file.
 CUR_DIR = os.path.dirname(os.path.realpath(__file__))
