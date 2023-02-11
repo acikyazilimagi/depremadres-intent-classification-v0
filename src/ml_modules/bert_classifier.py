@@ -4,7 +4,8 @@ from typing import List
 
 import requests
 from dotenv import load_dotenv
-from ml_modules.base_classifier import BaseClassifier
+
+from src.ml_modules.base_classifier import BaseClassifier
 
 load_dotenv(".env")
 

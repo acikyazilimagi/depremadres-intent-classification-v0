@@ -20,5 +20,5 @@ EXPOSE 8000
 COPY . /app
 
 # Run the command to start the FastAPI server
-CMD [ "python3", "intent-classification-v0/app_main.py" ] 
+CMD [ "python3", "src/app_main.py" ]
 

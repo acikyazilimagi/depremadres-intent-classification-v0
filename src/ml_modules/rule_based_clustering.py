@@ -5,7 +5,7 @@ from typing import Dict, List, Optional, Set, Tuple, Union
 import matplotlib.pyplot as plt
 import pandas as pd
 from unidecode import unidecode
-from ml_modules.base_classifier import BaseClassifier
+from src.ml_modules.base_classifier import BaseClassifier
 
 
 # Directory of this file.

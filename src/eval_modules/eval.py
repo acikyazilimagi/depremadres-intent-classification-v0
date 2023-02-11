@@ -10,8 +10,8 @@ Usage:
 import argparse
 import pandas as pd
 
-from ml_modules.rule_based_clustering import RuleBasedClassifier, preprocess_tweet
-from ml_modules.bert_classifier import BertClassifier
+from src.ml_modules.rule_based_clustering import RuleBasedClassifier, preprocess_tweet
+from src.ml_modules.bert_classifier import BertClassifier
 
 # Define command line arguments to control which classifiers to run.
 parser = argparse.ArgumentParser()
@@ -27,6 +27,7 @@ parser.add_argument('--run_rule_based_classifier',
 parser.add_argument('--run_bert_classifier',
                     action=argparse.BooleanOptionalAction, default=False)
 args = parser.parse_args()
+
 
 class ClassificationEval(object):
     def __init__(self, eval_frame, classifier_instance):

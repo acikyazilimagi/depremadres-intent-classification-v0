@@ -7,8 +7,8 @@ Usage:
 import argparse
 
 # ML modules
-from ml_modules.rule_based_clustering import RuleBasedClassifier
-from ml_modules.bert_classifier import BertClassifier
+from src.ml_modules.rule_based_clustering import RuleBasedClassifier
+from src.ml_modules.bert_classifier import BertClassifier
 
 # Define command line arguments to control which classifiers to run.
 parser = argparse.ArgumentParser()
@@ -43,6 +43,7 @@ def run_classifiers(text):
     # Remove duplicates.
     intents = list(set(intents))
     return intents
+
 
 if __name__ == '__main__':
     intents = run_classifiers(args.text)

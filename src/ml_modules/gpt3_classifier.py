@@ -1,6 +1,6 @@
 from typing import List
 
-from ml_modules.base_classifier import BaseClassifier
+from src.ml_modules.base_classifier import BaseClassifier
 
 
 class GPT3Classifier(BaseClassifier):
