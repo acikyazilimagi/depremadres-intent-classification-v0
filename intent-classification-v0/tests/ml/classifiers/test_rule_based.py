@@ -11,13 +11,13 @@ class TestRuleBased(TestCase):
 
     def test_classify_base_case(self):
         result = self.classifier.classify("")
-        assert isinstance(result, (set, list))
+        assert isinstance(result, list)
         assert len(result) == 0
 
     def test_classify_base(self):
         result = self.classifier.classify(
             "Enkaz altındayım lütfen yardım edin")
-        assert isinstance(result, (set, list))
+        assert isinstance(result, list)
         assert len(result) > 0
         for el in result:
             assert isinstance(el, str)
