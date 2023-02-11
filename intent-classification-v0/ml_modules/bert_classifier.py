@@ -1,8 +1,9 @@
-from dotenv import load_dotenv
-from typing import Dict, Tuple, Set, Optional, List, Union
 import logging
 import os
+from typing import List
+
 import requests
+from dotenv import load_dotenv
 
 load_dotenv(".env")
 
@@ -38,9 +39,15 @@ class BertClassifier(object):
         return response.json()
 
     def all_intents(self):
-        """Returns list of all possible intents this classifier can classify."""
-        return ["ALAKASIZ", "KURTARMA", "BARINMA", "SAGLIK", "LOJISTIK", "SU", "YAGMA", "YEMEK", "GIYSI", "ELEKTRONIK"]
+        """
+        Returns list of all possible intents this classifier can classify.
+        """
+        return ["ALAKASIZ", "KURTARMA", "BARINMA", "SAGLIK", "LOJISTIK", "SU",
+                "YAGMA", "YEMEK", "GIYSI", "ELEKTRONIK"]
 
+    @property
+    def none_label(self):
+        return "ALAKASIZ"
 
     def classify(self, text: str) -> List[str]:
         """
@@ -58,7 +65,15 @@ class BertClassifier(object):
         if response:
             # Labels are returned as a list of lists.
             labels_and_scores = response[0]
-            labels = [l_and_s["label"].upper() for l_and_s in labels_and_scores if l_and_s["score"] > self.classification_threshold]
+            labels = [l_and_s["label"].upper()
+                      for l_and_s in labels_and_scores
+                      if l_and_s["score"] > self.classification_threshold
+                      ]
+
+        # if ALAKASIZ and other category survive after threshold filter,
+        # remove ALAKASIZ
+        if self.none_label in labels and len(labels) > 1:
+            labels.pop(self.none_label)
 
         # Don't return set, as it will lose ordering.
         return labels
