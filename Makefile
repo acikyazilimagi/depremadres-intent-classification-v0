@@ -1,5 +1,3 @@
-install-reqs:
-	pip3 install --upgrade-strategy=only-if-needed -r requirements.txt
-
-test:
-	pytest
+test-docker:
+	docker build -t deprem-intent-classification .
+	docker run --rm -it deprem-intent-classification sh -c "pytest"
