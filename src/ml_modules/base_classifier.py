@@ -7,3 +7,7 @@ class BaseClassifier(ABC):
     @abstractmethod
     def classify(self, text: str) -> List[str]:
         raise NotImplementedError
+
+    @abstractmethod
+    def all_intents(self) -> List[str]:
+        raise NotImplementedError

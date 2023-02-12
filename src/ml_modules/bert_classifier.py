@@ -9,6 +9,9 @@ from src.ml_modules.base_classifier import BaseClassifier
 
 load_dotenv(".env")
 
+API_TOKEN = os.getenv("HF_HUB_TOKEN")
+MODEL_NAME = "deprem-ml/multilabel_earthquake_tweet_intent_bert_base_turkish_cased"
+
 # Add logging.
 logging.basicConfig(level=logging.INFO)
 
@@ -27,11 +30,8 @@ class BertClassifier(BaseClassifier):
         # The score threshold to deem a label as positive.
         self.classification_threshold = classification_threshold
 
-        API_TOKEN = os.getenv("HF_HUB_TOKEN")
         self.headers = {"Authorization": f"Bearer {API_TOKEN}"}
-
-        model_name = "deprem-ml/multilabel_earthquake_tweet_intent_bert_base_turkish_cased"
-        self.api_url = f"https://api-inference.huggingface.co/models/{model_name}"
+        self.api_url = f"https://api-inference.huggingface.co/models/{MODEL_NAME}"
 
     def __query(self, text):
         response = requests.post(
