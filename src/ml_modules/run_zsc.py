@@ -1,9 +1,10 @@
 import json
-import requests
 import os
 import time
-from dotenv import load_dotenv
 from typing import Dict, Optional
+
+import requests
+from dotenv import load_dotenv
 
 load_dotenv(".env")
 
@@ -11,7 +12,8 @@ API_TOKEN = os.getenv("HF_HUB_TOKEN")
 
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
 
-API_URL = "https://api-inference.huggingface.co/models/emrecan/convbert-base-turkish-mc4-cased-allnli_tr"
+API_URL = "https://api-inference.huggingface.co/models/emrecan/convbert-base-turkish-mc4-cased-allnli_tr"  # noqa
+
 
 def query(payload: Dict) -> Optional[Dict]:
     data = json.dumps(payload)
@@ -19,7 +21,8 @@ def query(payload: Dict) -> Optional[Dict]:
 
     # Check status code
     if response.status_code != 200:
-        print(f"Query: {payload} failed to run by returning code of {response.status_code}. Response: {response.text} ")
+        print(
+            f"Query: {payload} failed to run by returning code of {response.status_code}. Response: {response.text} ") # noqa
         print("Trying again in 10 seconds...")
         # Wait 10 seconds and try again
         time.sleep(10)

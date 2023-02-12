@@ -5,21 +5,18 @@ from typing import List
 import requests
 from dotenv import load_dotenv
 
+from src.ml_modules.base_classifier import BaseClassifier
+
 load_dotenv(".env")
+
+API_TOKEN = os.getenv("HF_HUB_TOKEN")
+MODEL_NAME = "deprem-ml/multilabel_earthquake_tweet_intent_bert_base_turkish_cased"
 
 # Add logging.
 logging.basicConfig(level=logging.INFO)
 
-API_URL = "https://api-inference.huggingface.co/models/deprem-ml/multilabel_earthquake_tweet_intent_bert_base_turkish_cased"
-API_TOKEN = os.getenv("HF_HUB_TOKEN")
 
-headers = {"Authorization": f"Bearer {API_TOKEN}"}
-
-# The score threshold to deem a label as positive.
-CLASSIFICATION_THRESHOLD = 0.5
-
-
-class BertClassifier(object):
+class BertClassifier(BaseClassifier):
     """
     BERT based classifier to uses huggingface inference API to classify tweets.
 
@@ -29,13 +26,19 @@ class BertClassifier(object):
     ["KURTARMA"]
     """
 
-    def __init__(self, classification_threshold=CLASSIFICATION_THRESHOLD):
+    def __init__(self, classification_threshold=0.5):
+        # The score threshold to deem a label as positive.
         self.classification_threshold = classification_threshold
 
-    def __query(self, text):
+        self.headers = {"Authorization": f"Bearer {API_TOKEN}"}
+        self.api_url = f"https://api-inference.huggingface.co/models/{MODEL_NAME}"
 
+    def __query(self, text):
         response = requests.post(
-            API_URL, headers=headers, json={"inputs": text})
+            self.api_url, headers=self.headers, json={"inputs": text})
+
+        # raise HTTPException if status code != 200
+        response.raise_for_status()
         return response.json()
 
     def all_intents(self):
