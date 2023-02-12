@@ -1,13 +1,15 @@
-﻿from typing import List
+﻿import argparse
+from typing import List
+
+import uvicorn
 from aiokafka import AIOKafkaConsumer
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import argparse
-import uvicorn
 
 # ML modules
-from ml_modules.rule_based_clustering import RuleBasedClassifier
-from ml_modules.bert_classifier import BertClassifier
+from src.ml_modules.bert_classifier import BertClassifier
+from src.ml_modules.rule_based_clustering import RuleBasedClassifier
+
 # import ml_modules.run_zsc as zsc
 
 # Define command line arguments to control which classifiers to run.
@@ -34,6 +36,7 @@ app = FastAPI()
 # Data models.
 class Request(BaseModel):
     text: str
+
 
 class Response(BaseModel):
     intents: List[str]

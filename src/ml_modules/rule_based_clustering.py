@@ -1,10 +1,12 @@
-import pandas as pd
-import numpy as np
-import re
-import matplotlib.pyplot as plt
-from typing import Dict, Tuple, Set, Optional, List, Union
-from unidecode import unidecode
 import os
+import re
+from typing import Dict, List, Optional, Set, Tuple, Union
+
+import matplotlib.pyplot as plt
+import pandas as pd
+from unidecode import unidecode
+from src.ml_modules.base_classifier import BaseClassifier
+
 
 # Directory of this file.
 CUR_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -13,7 +15,7 @@ CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 INTENT_CONFIG_DIR = os.path.join(CUR_DIR, "intent_config")
 
 
-class RuleBasedClassifier(object):
+class RuleBasedClassifier(BaseClassifier):
     """
     Rule based classifier that uses regex patterns to classify tweets.
 
@@ -46,13 +48,15 @@ class RuleBasedClassifier(object):
     def __compile_keywords_to_patterns(self):
         for intent, keywords in self.intent_to_keywords.items():
             self.intent_to_patterns[intent] = [re.compile(
-                f"(^|\W){k}($|\W)", re.IGNORECASE) for k in keywords]
+                f"(^|\\W){k}($|\\W)", re.IGNORECASE) for k in keywords]
 
     def all_intents(self):
-        """Returns list of all possible intents this classifier can classify."""
+        """
+        Returns list of all possible intents this classifier can classify.
+        """
         return self.intent_to_patterns.keys()
 
-    def classify(self, text: str) -> Set[str]:
+    def classify(self, text: str) -> List[str]:
         """
         Check if the given text contains any of the keywords of any intent.
         Args:
@@ -67,11 +71,7 @@ class RuleBasedClassifier(object):
                 if re.search(pattern, text):
                     intents.append(intent)
                     break  # No need to check other patterns for this intent.
-        return set(intents)
-
-
-# Signleton instance of the classifier that holds precompiled regex patterns for all intents.
-classifier = RuleBasedClassifier()
+        return list(set(intents))
 
 
 def get_data(file_name):
@@ -93,7 +93,7 @@ def preprocess_tweet(text: str) -> str:
     return unidecode(text)
 
 
-def process_tweet(tweet: Tuple, plot_data: Dict) -> Tuple[Optional[Set[str]], Dict]:
+def process_tweet(classifier, tweet: Tuple, plot_data: Dict) -> Tuple[Optional[Set[str]], Dict]:
     """
     Process the given tweet.
     Check if the tweet contains any of the keywords using rules.
@@ -120,10 +120,11 @@ def process_tweet(tweet: Tuple, plot_data: Dict) -> Tuple[Optional[Set[str]], Di
 
 
 def process_tweet_stream(df):
+    classifier = RuleBasedClassifier()
     plot_data = {}
     db_ready_data_list = []
     for _, row in df.iterrows():
-        db_ready_data_list.append(process_tweet(row, plot_data))
+        db_ready_data_list.append(classifier, process_tweet(row, plot_data))
     return db_ready_data_list, plot_data
 
 
@@ -131,7 +132,7 @@ def update_plot_data(plot_data: Dict, labels: Union[Set[str], List[str]]) -> Dic
     """
     Increment the count of the given labels in the plot data.
     Args:
-        plot_data: The dictionary that holds INTENT - COUNT pairs. 
+        plot_data: The dictionary that holds INTENT - COUNT pairs.
         labels: The labels to increment the count of.
 
     Returns:
