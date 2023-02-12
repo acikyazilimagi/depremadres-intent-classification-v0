@@ -37,10 +37,3 @@ uvicorn==0.20.0
 watchfiles==0.18.1
 websockets==10.4
 numpy
-# linting & test packages
-pytest==7.2.1
-pycodestyle==2.5.0
-autopep8==1.4.4
-autoflake==1.3
-flake8-commas==2.0.0
-flake8==3.7.8

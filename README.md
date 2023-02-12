@@ -1,7 +1,7 @@
 # Yeni classifier eklenmesi
 
 1. `ml_modules` altında BaseClassifier'ı extend eden yeni sınıf yarat.
-2. Eğer gerekliyse `requirements.txt`'yi güncelle.
+2. Eğer gerekliyse `requirements.txt`'yi ve `requirements-dev.txt`'yi güncelle.
 3. `tests/ml/classifiers/test_models.py` dosyasında yeni classifier'ı importlayıp `setupClass`'ı güncelle.
 4. `make test-docker` komutu ile testlerin geçtiğinden emin ol.
 5. Yeni branch'ı pushla ve PR aç.
