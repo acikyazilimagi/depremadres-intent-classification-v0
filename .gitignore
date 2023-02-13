@@ -31,3 +31,6 @@ share/python-wheels/
 MANIFEST
 *.pyc
 intent-classification-v0\__pycache__
+
+# Jupyter
+.ipynb_checkpoints/
